@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add Project | Task Chapter 2</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+            crossorigin="anonymous"
+        >
+    </head>
+    <body class="bg-secondary-subtle">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="assets/images/logo.png"/>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active fw-bold" aria-current="page" href="add-project.html">Add Project</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex">
+                        <a class="btn btn-dark" href="contact.html" role="button">Contact Me</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="p-3">
+            <form class="m-auto" style="max-width: 500px;">
+                <h1 class="mb-3 text-center fw-bold">ADD MY PROJECT</h1>
+
+                <div class="mb-3">
+                    <label for="projectName" class="form-label fw-bold">Project Name</label>
+                    <input type="text" class="form-control" id="projectName" required/>
+                </div>
+                
+                <div class="mb-3 row">
+                    <div class="col">
+                        <label for="startDate" class="form-label fw-bold">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" required/>
+                    </div>
+                    <div class="col">
+                        <label for="endDate" class="form-label fw-bold">End Date</label>
+                        <input type="date" class="form-control" id="endDate" required/>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label fw-bold">Description</label>
+                    <textarea class="form-control" id="description" style="resize: none;" required></textarea>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="form-label fw-bold">Technologies</label>
+                    <div class="col">
+                        <div>
+                            <input class="form-check-input me-auto" type="checkbox" id="nodeJs"/>
+                            <label class="ms-2" for="nodeJs">Node Js</label>
+                        </div>
+                        <div>
+                            <input class="form-check-input me-auto" type="checkbox" id="reactJs" />
+                            <label class="ms-2" for="reactJs">React Js</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div>
+                            <input class="form-check-input me-auto" type="checkbox" id="nextJs" />
+                            <label class="ms-2" for="nextJs">Next Js</label>
+                        </div>
+                        <div>
+                            <input class="form-check-input me-auto" type="checkbox" id="typescript" />
+                            <label class="ms-2" for="typescript">TypeScript</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="formFile" class="form-label fw-bold">Upload Image</label>
+                    <input class="form-control" type="file" id="formFile" required>
+                </div>
+
+                <div class="mb-3 text-end">
+                    <button class="btn btn-dark rounded-pill fw-bold px-4" type="submit">submit</button>
+                </div>
+            </form>
+        </div>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous">
+        </script>
+    </body>
+</html>
