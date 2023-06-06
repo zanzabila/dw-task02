@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+* {
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    color: black;
+}
+
+body {
+    background-color: #dce0e4;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: #f8f4f4;
+    display: flex;
+    align-items: center;
+    height: 10vh;
+}
+
+nav ul {
+    display: flex;
+    list-style-type: none;
+    align-items: center;
+}
+
+nav ul li {
+    margin-right: 25px;
+}
+
+nav ul li a {
+    color: black;
+}
+
+nav ul li a:hover {
+    color: orangered;
+}
+
+nav ul li .active {
+    font-weight: bold;
+}
+
+.nav-left {
+    flex: 50%;
+}
+
+.nav-right {
+    flex: 50%;
+    text-align: end;
+    margin-right: 25px;
+}
+
+.nav-right a {
+    background-color: black;
+    padding: 8px 20px;
+    color: white;
+    border-radius: 5px;
+}
+
+.nav-right a:hover {
+    background-color: orangered;
+}
+
+.detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail > * {
+    margin: 50px;
+}
+
+.detail h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.detail .info {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+}
+
+.detail .info .project-img {
+    flex: 2;
+}
+
+.detail .info .project-img img {
+    width: 100%;
+}
+
+.detail .info .dur-tech {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail .info .dur-tech img {
+    height: 22px;
+}
+
+.detail .info .dur-tech .duration div div {
+    display: flex;
+    gap: 8px;
+}
+
+.detail .info .dur-tech .duration .duration-title,
+.detail .info .dur-tech .technologies .technologies-title {
+    font-weight: 600;
+    font-size: 24px;
+    margin: 8px 0;
+}
+
+.detail .info .dur-tech .duration .duration-contents {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail .info .dur-tech .technologies .technologies-contents {
+    display: flex;
+}
+
+.detail .info .dur-tech .technologies .technologies-contents > * {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail .info .dur-tech .technologies .technologies-contents > * > div {
+    display: flex;
+    gap: 8px;
+}
+
+.detail > div > p {
+    text-align: justify;
+    margin: 0;
+}
+
+#bars-menu {
+    display: none;
+}
+
+#bars-menu button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+#bars-menu i:hover {
+    color: orangered;
+}
+
+.hamburger-nav-container {
+    font-size: 23px;
+    list-style-type: none;
+    display: none;
+}
+
+.hamburger-nav-container * {
+    background-color: #d3d3d3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.hamburger-nav-container > *:hover {
+    color: white;
+    background-color: orangered;
+}
+
+.hamburger-nav-container > div:hover {
+    color: black;
+    background-color: #d3d3d3;
+}
+
+.hamburger-nav-container .hamburger-active {
+    font-weight: bold;
+}
+
+.hamburger-nav-container #contact-button {
+    background-color: black;
+    padding: 8px 20px;
+    color: white;
+    border-radius: 5px;
+}
+
+.hamburger-nav-container #contact-button:hover {
+    background-color: orangered;
+}
+
+@media only screen and (max-width: 900px) {
+    .item-collapse {
+        display: none;
+    }
+
+    #bars-menu {
+        display: block;
+    }
+
+    .detail > * {
+        margin: 30px;
+    }
+
+    .detail .info {
+        flex-direction: column;
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    .detail .info .dur-tech .technologies .technologies-contents {
+        flex-direction: column;
+        gap: 16px;
+    }
+}
