@@ -44,7 +44,7 @@
         </nav>
 
         <div class="detail">
-            <h1>Dumbways Web App</h1>
+            <h1 class="fw-bold">{{.Project.Name}}</h1>
             
             <div class="info">
                 <div class="project-img">
@@ -56,11 +56,11 @@
                         <div class="duration-contents">
                             <div>
                                 <img src="/public/images/calendar-days-solid.svg"/>
-                                <div>12 Jan 2021 - 11 Feb 2021</div>
+                                <div>{{.StartDate}} - {{.EndDate}}</div>
                             </div>
                             <div>
                                 <img src="/public/images/clock-regular.svg"/>
-                                <div>1 month</div>
+                                <div>{{.Project.Duration}}</div>
                             </div>
                         </div>
                     </div>
@@ -68,24 +68,32 @@
                         <div class="technologies-title">Technologies</div>
                         <div class="technologies-contents">
                             <div class="left">
+                                {{if .Project.NodeJs}}
+                                <div>
+                                    <img src="/public/images/node-js.svg" />
+                                    <div>Node Js</div>
+                                </div>
+                                {{end}}
+                                {{if .Project.ReactJs}}
                                 <div>
                                     <img src="/public/images/react.svg"/>
                                     <div>React Js</div>
                                 </div>
-                                <div>
-                                    <img src="/public/images/node-js.svg"/>
-                                    <div>Node Js</div>
-                                </div>
+                                {{end}}
                             </div>
                             <div class="right">
+                                {{if .Project.NextJs}}
                                 <div>
                                     <img src="/public/images/nextjs.svg"/>
                                     <div>Next Js</div>
                                 </div>
+                                {{end}}
+                                {{if .Project.TypeScript}}
                                 <div>
                                     <img src="/public/images/typescript.svg"/>
                                     <div>TypeScript</div>
                                 </div>
+                                {{end}}
                             </div>
                         </div>
                     </div>
@@ -93,21 +101,7 @@
             </div>
 
             <div>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida dictum fusce ut. Viverra tellus in hac habitasse platea dictumst. Tellus pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum. Est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat. Risus at ultrices mi tempus imperdiet nulla malesuada. Nunc lobortis mattis aliquam faucibus. Et malesuada fames ac turpis egestas integer eget aliquet nibh. Quam vulputate dignissim suspendisse in. Nunc mi ipsum faucibus vitae aliquet nec ullamcorper. Diam donec adipiscing tristique risus. Potenti nullam ac tortor vitae purus faucibus ornare suspendisse. Elit at imperdiet dui accumsan sit amet nulla facilisi. Sagittis purus sit amet volutpat consequat mauris nunc congue. Felis imperdiet proin fermentum leo vel orci porta. Eu volutpat odio facilisis mauris sit amet. Quis hendrerit dolor magna eget est lorem ipsum.
-                </p>
-                <p>
-                    Adipiscing diam donec adipiscing tristique risus. Augue neque gravida in fermentum et sollicitudin. Ac orci phasellus egestas tellus rutrum tellus pellentesque. Cras semper auctor neque vitae tempus quam. Ipsum suspendisse ultrices gravida dictum fusce ut. Et egestas quis ipsum suspendisse ultrices gravida dictum fusce. Fringilla phasellus faucibus scelerisque eleifend donec pretium vulputate. Pharetra massa massa ultricies mi quis hendrerit. Scelerisque eleifend donec pretium vulputate sapien nec sagittis aliquam malesuada. Ut enim blandit volutpat maecenas volutpat blandit aliquam. Dignissim suspendisse in est ante. Rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui.
-                </p>
-                <p>
-                    Et malesuada fames ac turpis. Interdum posuere lorem ipsum dolor. Id ornare arcu odio ut sem. Accumsan sit amet nulla facilisi morbi. Semper eget duis at tellus at. Arcu ac tortor dignissim convallis aenean et. Porta lorem mollis aliquam ut porttitor leo a diam. Aliquam purus sit amet luctus venenatis lectus. Non nisi est sit amet facilisis magna. Nascetur ridiculus mus mauris vitae ultricies leo integer malesuada. Pulvinar sapien et ligula ullamcorper malesuada. Ante metus dictum at tempor. Turpis in eu mi bibendum neque egestas congue quisque. Blandit libero volutpat sed cras ornare arcu dui vivamus. Nunc mattis enim ut tellus elementum. Sed elementum tempus egestas sed. Massa placerat duis ultricies lacus. Scelerisque varius morbi enim nunc faucibus a pellentesque sit amet.
-                </p>
-                <p>
-                    Purus sit amet volutpat consequat mauris nunc congue nisi. Ut lectus arcu bibendum at varius vel pharetra. Sollicitudin tempor id eu nisl. Sagittis orci a scelerisque purus semper eget. Risus ultricies tristique nulla aliquet enim tortor at auctor. Pulvinar pellentesque habitant morbi tristique senectus et netus et. Orci dapibus ultrices in iaculis nunc sed augue lacus viverra. Pellentesque elit ullamcorper dignissim cras. Sollicitudin ac orci phasellus egestas. Aliquam ut porttitor leo a.
-                </p>
-                <p>
-                    Ut consequat semper viverra nam libero justo laoreet sit. Velit scelerisque in dictum non consectetur a erat nam at. Suscipit tellus mauris a diam maecenas sed enim ut sem. Sit amet nulla facilisi morbi tempus iaculis urna id volutpat. Donec ac odio tempor orci dapibus ultrices in iaculis. Tellus mauris a diam maecenas sed enim ut. Tellus molestie nunc non blandit massa enim. Eget lorem dolor sed viverra ipsum nunc aliquet. Nibh nisl condimentum id venenatis a condimentum vitae sapien. In nulla posuere sollicitudin aliquam ultrices sagittis orci a. In fermentum et sollicitudin ac. Arcu odio ut sem nulla. Pulvinar sapien et ligula ullamcorper malesuada proin libero nunc consequat. Commodo elit at imperdiet dui accumsan. Fames ac turpis egestas maecenas pharetra convallis posuere morbi. Gravida neque convallis a cras semper auctor neque vitae. Feugiat in fermentum posuere urna nec. Cursus turpis massa tincidunt dui ut ornare lectus. Auctor urna nunc id cursus metus aliquam eleifend.
-                </p>
+                {{.Project.Desc}}
             </div>
 
         </div>

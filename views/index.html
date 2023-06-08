@@ -16,7 +16,7 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary px-4 py-3">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <img src="public/images/logo.png"/>
+                    <img src="/public/images/logo.png"/>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,10 +52,10 @@
                             <a href="#" class="my-auto" style="text-decoration: none; color: #000000;">download <i class="fa-solid fa-download" style="color: #000000;"></i></a>
                         </div>
                         <div class="my-3">
-                            <a href="https://linkedin.com"><img src="public/images/icons8-linkedin-circled.svg" style="height: 3em;"></a>
-                            <a href="https://instagram.com"><img src="public/images/icons8-instagram-circle.svg" style="height: 3em;"></a>
-                            <a href="https://facebook.com"><img src="public/images/icons8-facebook.svg" style="height: 3em;"></a>
-                            <a href="https://twitter.com"><img src="public/images/icons8-twitter-circled.svg" style="height: 3em;"></a>
+                            <a href="https://linkedin.com"><img src="/public/images/icons8-linkedin-circled.svg" style="height: 3em;"></a>
+                            <a href="https://instagram.com"><img src="/public/images/icons8-instagram-circle.svg" style="height: 3em;"></a>
+                            <a href="https://facebook.com"><img src="/public/images/icons8-facebook.svg" style="height: 3em;"></a>
+                            <a href="https://twitter.com"><img src="/public/images/icons8-twitter-circled.svg" style="height: 3em;"></a>
                         </div>
                     </div>
                     
@@ -75,91 +75,40 @@
             <div class="p-5">
                 <div class="row row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
 
+                    {{range $index, $data := .Projects}}
                     <div class="col">
                         <div class="card">
-                            <img src="public/images/img2.png" class="card-img-top" alt="">
+                            <img src="/public/images/img2.png" class="card-img-top" alt="">
                             <div class="card-body">
-                                <h5 class="card-title">Dumbways Mobile App - 2021</h5>
-                                <div class="mb-2 fw-light">durasi: 3 bulan</div>
-                                <p class="card-text">
-                                    App that is used by dumbways student, it was deployed and can be downloaded on playstore. Happy download
-                                </p>
-                                <div class="d-flex gap-2" style="width: 100%;">
-                                    <button class="btn btn-dark" style="width: 100%;">edit</button>
-                                    <button class="btn btn-dark" style="width: 100%;">delete</button>
+                                <h5 class="card-title"><a href="/project/{{$index}}" target="_blank" style="text-decoration: none; color: #000000;">{{$data.Name}}</a></h5>
+                                <div class="mb-2 fw-light">durasi: {{$data.Duration}}</div>
+                                <p class="card-text">{{$data.Desc}}</p>
+                                <div class="d-flex flex-row mx-2 my-3 gap-2" style="height: 2em;">
+                                    {{if $data.NodeJs}}
+                                    <img src="/public/images/node-js.svg" alt="Node Js" style="height: 100%;" />
+                                    {{end}}
+                                    {{if $data.ReactJs}}
+                                    <img src="/public/images/react.svg" alt="React Js" style="height: 100%;" />
+                                    {{end}}
+                                    {{if $data.NextJs}}
+                                    <img src="/public/images/nextjs.svg" alt="Next Js" style="height: 100%;" />
+                                    {{end}}
+                                    {{if $data.TypeScript}}
+                                    <img src="/public/images/typescript.svg" alt="TypeScript" style="height: 100%;" />
+                                    {{end}}
+                                </div>
+                                <div class="gap-2">
+                                    <form class="d-inline" action="/edit-project/{{$index}}" method="GET">
+                                        <input type="submit" class="btn btn-dark" value="edit"></input>
+                                    </form>
+                                    <form class="d-inline" action="/delete-project/{{$index}}" method="POST">
+                                        <input type="submit" class="btn btn-dark" value="delete"></input>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col">
-                        <div class="card">
-                            <img src="public/images/img3.png" class="card-img-top" alt="">
-                            <div class="card-body">
-                                <h5 class="card-title">Dumbways Mobile App - 2021</h5>
-                                <div class="mb-2 fw-light">durasi: 3 bulan</div>
-                                <p class="card-text">
-                                    App that is used by dumbways student, it was deployed and can be downloaded on playstore. Happy download
-                                </p>
-                                <div class="d-flex gap-2" style="width: 100%;">
-                                    <button class="btn btn-dark" style="width: 100%;">edit</button>
-                                    <button class="btn btn-dark" style="width: 100%;">delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card">
-                            <img src="public/images/img4.png" class="card-img-top" alt="">
-                            <div class="card-body">
-                                <h5 class="card-title">Dumbways Mobile App - 2021</h5>
-                                <div class="mb-2 fw-light">durasi: 3 bulan</div>
-                                <p class="card-text">
-                                    App that is used by dumbways student, it was deployed and can be downloaded on playstore. Happy download
-                                </p>
-                                <div class="d-flex gap-2" style="width: 100%;">
-                                    <button class="btn btn-dark" style="width: 100%;">edit</button>
-                                    <button class="btn btn-dark" style="width: 100%;">delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card">
-                            <img src="public/images/img5.png" class="card-img-top" alt="">
-                            <div class="card-body">
-                                <h5 class="card-title">Dumbways Mobile App - 2021</h5>
-                                <div class="mb-2 fw-light">durasi: 3 bulan</div>
-                                <p class="card-text">
-                                    App that is used by dumbways student, it was deployed and can be downloaded on playstore. Happy download
-                                </p>
-                                <div class="d-flex gap-2" style="width: 100%;">
-                                    <button class="btn btn-dark" style="width: 100%;">edit</button>
-                                    <button class="btn btn-dark" style="width: 100%;">delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="card">
-                            <img src="public/images/img6.png" class="card-img-top" alt="">
-                            <div class="card-body">
-                                <h5 class="card-title">Dumbways Mobile App - 2021</h5>
-                                <div class="mb-2 fw-light">durasi: 1 bulan</div>
-                                <p class="card-text">
-                                    App that is used by dumbways student, it was deployed and can be downloaded on playstore. Happy download
-                                </p>
-                                <div class="d-flex gap-2" style="width: 100%;">
-                                    <button class="btn btn-dark" style="width: 100%;">edit</button>
-                                    <button class="btn btn-dark" style="width: 100%;">delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    {{end}}
                 </div>
             </div>
         </div>
