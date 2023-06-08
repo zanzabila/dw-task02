@@ -47,6 +47,17 @@ var projectData = []Project{
 		NextJs:     false,
 		TypeScript: false,
 	},
+	{
+		Name:       "Project 3",
+		StartDate:  "2022-06-05",
+		EndDate:    "2023-06-06",
+		Duration:   countDuration("2022-06-05", "2023-06-06"),
+		Desc:       "This is the description of project 3",
+		NodeJs:     true,
+		ReactJs:    true,
+		NextJs:     true,
+		TypeScript: true,
+	},
 }
 
 func main() {

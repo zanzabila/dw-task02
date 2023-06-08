@@ -2,7 +2,6 @@
 <html>
     <head>
         <title>Project Detail</title>
-        <link rel="stylesheet" href="/public/css/project-detail.css"/>
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -43,64 +42,57 @@
             </div>
         </nav>
 
-        <div class="detail">
-            <h1 class="fw-bold">{{.Project.Name}}</h1>
+        <div class="bg-secondary-subtle p-5">
+            <h1 class="fw-bold text-center mb-4">{{.Project.Name}}</h1>
             
-            <div class="info">
-                <div class="project-img">
-                    <img src="/public/images/img7.png" alt="project-image"/>
+            <div class="d-flex flex-xxl-row flex-xl-row flex-lg-row flex-md-row flex-sm-column flex-column gap-4">
+                <div style="flex: 2;">
+                    <img src="/public/images/img7.png" alt="project-image" style="width: 100%; object-fit: cover;"/>
                 </div>
-                <div class="dur-tech">
-                    <div class="duration">
-                        <div class="duration-title">Duration</div>
-                        <div class="duration-contents">
-                            <div>
-                                <img src="/public/images/calendar-days-solid.svg"/>
-                                <div>{{.StartDate}} - {{.EndDate}}</div>
-                            </div>
-                            <div>
-                                <img src="/public/images/clock-regular.svg"/>
-                                <div>{{.Project.Duration}}</div>
-                            </div>
-                        </div>
+                <div style="flex: 1;">
+                    <h5>Duration</h5>
+                    <div class="m-2 d-flex flex-wrap gap-2 align-items-center">
+                        <img class="d-inline" src="/public/images/calendar-days-solid.svg" style="width: 2em;"/>
+                        <div class="d-inline">{{.StartDate}} - {{.EndDate}}</div>
                     </div>
-                    <div class="technologies">
-                        <div class="technologies-title">Technologies</div>
-                        <div class="technologies-contents">
-                            <div class="left">
-                                {{if .Project.NodeJs}}
-                                <div>
-                                    <img src="/public/images/node-js.svg" />
-                                    <div>Node Js</div>
-                                </div>
-                                {{end}}
-                                {{if .Project.ReactJs}}
-                                <div>
-                                    <img src="/public/images/react.svg"/>
-                                    <div>React Js</div>
-                                </div>
-                                {{end}}
+                    <div class="m-2 d-flex flex-wrap gap-2 align-items-center">
+                        <img class="d-inline" src="/public/images/clock-regular.svg" style="width: 2em;" />
+                        <div class="d-inline">{{.Project.Duration}}</div>
+                    </div>
+
+                    <h5 class="mt-5">Technologies</h5>
+                    <div>
+                        <div class="row row-cols-2 g-2">
+                            {{if .Project.NodeJs}}
+                            <div class="col d-flex gap-2 align-items-center">
+                                <img src="/public/images/node-js.svg" style="width: 2em;"/>
+                                <div>Node Js</div>
                             </div>
-                            <div class="right">
-                                {{if .Project.NextJs}}
-                                <div>
-                                    <img src="/public/images/nextjs.svg"/>
-                                    <div>Next Js</div>
-                                </div>
-                                {{end}}
-                                {{if .Project.TypeScript}}
-                                <div>
-                                    <img src="/public/images/typescript.svg"/>
-                                    <div>TypeScript</div>
-                                </div>
-                                {{end}}
+                            {{end}}
+                            {{if .Project.ReactJs}}
+                            <div class="col d-flex gap-2 align-items-center">
+                                <img src="/public/images/react.svg" style="width: 2em;"/>
+                                <div>React Js</div>
                             </div>
+                            {{end}}
+                            {{if .Project.NextJs}}
+                            <div class="col d-flex gap-2 align-items-center">
+                                <img src="/public/images/nextjs.svg" style="width: 2em;"/>
+                                <div>Next Js</div>
+                            </div>
+                            {{end}}
+                            {{if .Project.TypeScript}}
+                            <div class="col d-flex gap-2 align-items-center">
+                                <img src="/public/images/typescript.svg" style="width: 2em;"/>
+                                <div>TypeScript</div>
+                            </div>
+                            {{end}}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div>
+            <div class="mt-5">
                 {{.Project.Desc}}
             </div>
 
