@@ -30,42 +30,6 @@ type Project struct {
 	Image      string
 }
 
-var projectData = []Project{
-	// {
-	// 	Name:       "Project 1",
-	// 	StartDate:  "2020-01-15",
-	// 	EndDate:    "2020-02-15",
-	// 	Duration:   countDuration("2020-01-15", "2020-02-15"),
-	// 	Desc:       "This is the description of project 1",
-	// 	NodeJs:     true,
-	// 	ReactJs:    false,
-	// 	NextJs:     true,
-	// 	TypeScript: true,
-	// },
-	// {
-	// 	Name:       "Project 2",
-	// 	StartDate:  "2023-06-05",
-	// 	EndDate:    "2023-06-06",
-	// 	Duration:   countDuration("2023-06-05", "2023-06-06"),
-	// 	Desc:       "This is the description of project 2",
-	// 	NodeJs:     false,
-	// 	ReactJs:    false,
-	// 	NextJs:     false,
-	// 	TypeScript: false,
-	// },
-	// {
-	// 	Name:       "Project 3",
-	// 	StartDate:  "2022-06-05",
-	// 	EndDate:    "2023-06-06",
-	// 	Duration:   countDuration("2022-06-05", "2023-06-06"),
-	// 	Desc:       "This is the description of project 3",
-	// 	NodeJs:     true,
-	// 	ReactJs:    true,
-	// 	NextJs:     true,
-	// 	TypeScript: true,
-	// },
-}
-
 func main() {
 	connection.DatabaseConnect()
 
@@ -87,9 +51,9 @@ func main() {
 }
 
 func home(c echo.Context) error {
-	data, _ := connection.Conn.Query(context.Background(), "SELECT id, name, start_date, end_date, description, technologies, image FROM tb_projects")
+	data, _ := connection.Conn.Query(context.Background(), "SELECT * FROM tb_projects")
 
-	projectData = []Project{}
+	var projectData []Project
 	for data.Next() {
 		var each = Project{}
 
@@ -144,20 +108,26 @@ func projectDetail(c echo.Context) error {
 
 	var ProjectDetail = Project{}
 
-	for i, data := range projectData {
-		if id == i {
-			ProjectDetail = Project{
-				Name:       data.Name,
-				StartDate:  data.StartDate,
-				EndDate:    data.EndDate,
-				Duration:   data.Duration,
-				Desc:       data.Desc,
-				NodeJs:     data.NodeJs,
-				ReactJs:    data.ReactJs,
-				NextJs:     data.NextJs,
-				TypeScript: data.TypeScript,
-			}
-		}
+	err := connection.Conn.QueryRow(context.Background(), "SELECT * FROM tb_projects WHERE id=$1", id).Scan(
+		&ProjectDetail.ID, &ProjectDetail.Name, &ProjectDetail.StartDate, &ProjectDetail.EndDate, &ProjectDetail.Desc, &ProjectDetail.Techs, &ProjectDetail.Image,
+	)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	ProjectDetail.Duration = countDuration(ProjectDetail.StartDate, ProjectDetail.EndDate)
+	if isAvailable(ProjectDetail.Techs, "nodejs") {
+		ProjectDetail.NodeJs = true
+	}
+	if isAvailable(ProjectDetail.Techs, "reactjs") {
+		ProjectDetail.ReactJs = true
+	}
+	if isAvailable(ProjectDetail.Techs, "nextjs") {
+		ProjectDetail.NextJs = true
+	}
+	if isAvailable(ProjectDetail.Techs, "typescript") {
+		ProjectDetail.TypeScript = true
 	}
 
 	data := map[string]interface{}{
@@ -166,10 +136,10 @@ func projectDetail(c echo.Context) error {
 		"EndDate":   getDateString(ProjectDetail.EndDate.Format("2006-01-02")),
 	}
 
-	var tmpl, err = template.ParseFiles("views/project-detail.html")
+	var tmpl, errTemplate = template.ParseFiles("views/project-detail.html")
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	if errTemplate != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": errTemplate.Error()})
 	}
 
 	return tmpl.Execute(c.Response(), data)
@@ -190,30 +160,40 @@ func formEditProject(c echo.Context) error {
 
 	var ProjectDetail = Project{}
 
-	for i, data := range projectData {
-		if id == i {
-			ProjectDetail = Project{
-				Name:       data.Name,
-				StartDate:  data.StartDate,
-				EndDate:    data.EndDate,
-				Duration:   data.Duration,
-				Desc:       data.Desc,
-				NodeJs:     data.NodeJs,
-				ReactJs:    data.ReactJs,
-				NextJs:     data.NextJs,
-				TypeScript: data.TypeScript,
-			}
-		}
-	}
-
-	data := map[string]interface{}{
-		"Project": ProjectDetail,
-		"Id":      id,
-	}
-
-	var tmpl, err = template.ParseFiles("views/edit-project.html")
+	err := connection.Conn.QueryRow(context.Background(), "SELECT * FROM tb_projects WHERE id=$1", id).Scan(
+		&ProjectDetail.ID, &ProjectDetail.Name, &ProjectDetail.StartDate, &ProjectDetail.EndDate, &ProjectDetail.Desc, &ProjectDetail.Techs, &ProjectDetail.Image,
+	)
 
 	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	ProjectDetail.Duration = countDuration(ProjectDetail.StartDate, ProjectDetail.EndDate)
+	if isAvailable(ProjectDetail.Techs, "nodejs") {
+		ProjectDetail.NodeJs = true
+	}
+	if isAvailable(ProjectDetail.Techs, "reactjs") {
+		ProjectDetail.ReactJs = true
+	}
+	if isAvailable(ProjectDetail.Techs, "nextjs") {
+		ProjectDetail.NextJs = true
+	}
+	if isAvailable(ProjectDetail.Techs, "typescript") {
+		ProjectDetail.TypeScript = true
+	}
+
+	start := ProjectDetail.StartDate.Format("2006-01-02")
+	end := ProjectDetail.EndDate.Format("2006-01-02")
+
+	data := map[string]interface{}{
+		"Project":   ProjectDetail,
+		"StartDate": start,
+		"EndDate":   end,
+	}
+
+	var tmpl, errTemplate = template.ParseFiles("views/edit-project.html")
+
+	if errTemplate != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
@@ -230,23 +210,36 @@ func submitProject(c echo.Context) error {
 	nextJs := c.FormValue("nextJs")
 	typescript := c.FormValue("typescript")
 
-	start, _ := time.Parse("2006-01-02", startDate)
-	end, _ := time.Parse("2006-01-02", endDate)
-	var newProject = Project{
-		Name:       name,
-		StartDate:  start,
-		EndDate:    end,
-		Duration:   countDuration(start, end),
-		Desc:       desc,
-		NodeJs:     (nodeJs == "nodejs"),
-		ReactJs:    (reactJs == "reactjs"),
-		NextJs:     (nextJs == "nextjs"),
-		TypeScript: (typescript == "typescript"),
+	var s []string
+	if nodeJs == "nodejs" {
+		s = append(s, "nodejs")
+	}
+	if reactJs == "reactjs" {
+		s = append(s, "reactjs")
+	}
+	if nextJs == "nextjs" {
+		s = append(s, "nextjs")
+	}
+	if typescript == "typescript" {
+		s = append(s, "typescript")
+	}
+	combined := strings.Join(s, ",")
+
+	image := "image.jpg"
+
+	_, err := connection.Conn.Exec(
+		context.Background(),
+		"INSERT INTO tb_projects (name, start_date, end_date, description, technologies, image) VALUES ($1, $2, $3, $4, $5, $6)",
+		name, startDate, endDate, desc, "{"+combined+"}", image,
+	)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
-	projectData = append(projectData, newProject)
+	var id int
+	err = connection.Conn.QueryRow(context.Background(), "SELECT id FROM tb_projects WHERE id=(SELECT max(id) FROM tb_projects)").Scan(&id)
 
-	id := len(projectData) - 1
 	return c.Redirect(http.StatusMovedPermanently, "/project/"+strconv.Itoa(id))
 }
 
@@ -264,27 +257,46 @@ func submitEditedProject(c echo.Context) error {
 
 	start, _ := time.Parse("2006-01-02", startDate)
 	end, _ := time.Parse("2006-01-02", endDate)
-	var editedProject = Project{
-		Name:       name,
-		StartDate:  start,
-		EndDate:    end,
-		Duration:   countDuration(start, end),
-		Desc:       desc,
-		NodeJs:     (nodeJs == "nodejs"),
-		ReactJs:    (reactJs == "reactjs"),
-		NextJs:     (nextJs == "nextjs"),
-		TypeScript: (typescript == "typescript"),
-	}
 
-	i, _ := strconv.Atoi(id)
-	projectData[i] = editedProject
+	var s []string
+	if nodeJs == "nodejs" {
+		s = append(s, "nodejs")
+	}
+	if reactJs == "reactjs" {
+		s = append(s, "reactjs")
+	}
+	if nextJs == "nextjs" {
+		s = append(s, "nextjs")
+	}
+	if typescript == "typescript" {
+		s = append(s, "typescript")
+	}
+	combined := strings.Join(s, ",")
+
+	image := "image.jpg"
+
+	_, err := connection.Conn.Exec(
+		context.Background(),
+		"UPDATE tb_projects SET name=$1, start_date=$2, end_date=$3, description=$4, technologies=$5, image=$6 WHERE id=$7",
+		name, start, end, desc, "{"+combined+"}", image, id,
+	)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
 
 	return c.Redirect(http.StatusMovedPermanently, "/project/"+id)
 }
 
 func deleteProject(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
-	projectData = append(projectData[:id], projectData[id+1:]...)
+
+	_, err := connection.Conn.Exec(context.Background(), "DELETE FROM tb_projects WHERE id=$1", id)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
 	return c.Redirect(http.StatusMovedPermanently, "/")
 }
 
@@ -352,7 +364,7 @@ func getProjectIndex(w http.ResponseWriter, r *http.Request) string {
 	url := r.URL.String()
 	lastSegment := path.Base(url)
 	re := regexp.MustCompile("[0-9]+")
-	return strings.Join((re.FindAllString(lastSegment, -1))[:], "")
+	return (re.FindAllString(lastSegment, -1))[0]
 }
 
 func isAvailable(arr []string, s string) bool {
