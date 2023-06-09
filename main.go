@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"html/template"
 	"net/http"
 	"path"
+	"personalweb/connection"
 	"regexp"
 	"strconv"
 	"strings"
@@ -13,54 +16,59 @@ import (
 )
 
 type Project struct {
+	ID         int
 	Name       string
-	StartDate  string
-	EndDate    string
+	StartDate  time.Time
+	EndDate    time.Time
 	Duration   string
 	Desc       string
+	Techs      []string
 	NodeJs     bool
 	ReactJs    bool
 	NextJs     bool
 	TypeScript bool
+	Image      string
 }
 
 var projectData = []Project{
-	{
-		Name:       "Project 1",
-		StartDate:  "2020-01-15",
-		EndDate:    "2020-02-15",
-		Duration:   countDuration("2020-01-15", "2020-02-15"),
-		Desc:       "This is the description of project 1",
-		NodeJs:     true,
-		ReactJs:    false,
-		NextJs:     true,
-		TypeScript: true,
-	},
-	{
-		Name:       "Project 2",
-		StartDate:  "2023-06-05",
-		EndDate:    "2023-06-06",
-		Duration:   countDuration("2023-06-05", "2023-06-06"),
-		Desc:       "This is the description of project 2",
-		NodeJs:     false,
-		ReactJs:    false,
-		NextJs:     false,
-		TypeScript: false,
-	},
-	{
-		Name:       "Project 3",
-		StartDate:  "2022-06-05",
-		EndDate:    "2023-06-06",
-		Duration:   countDuration("2022-06-05", "2023-06-06"),
-		Desc:       "This is the description of project 3",
-		NodeJs:     true,
-		ReactJs:    true,
-		NextJs:     true,
-		TypeScript: true,
-	},
+	// {
+	// 	Name:       "Project 1",
+	// 	StartDate:  "2020-01-15",
+	// 	EndDate:    "2020-02-15",
+	// 	Duration:   countDuration("2020-01-15", "2020-02-15"),
+	// 	Desc:       "This is the description of project 1",
+	// 	NodeJs:     true,
+	// 	ReactJs:    false,
+	// 	NextJs:     true,
+	// 	TypeScript: true,
+	// },
+	// {
+	// 	Name:       "Project 2",
+	// 	StartDate:  "2023-06-05",
+	// 	EndDate:    "2023-06-06",
+	// 	Duration:   countDuration("2023-06-05", "2023-06-06"),
+	// 	Desc:       "This is the description of project 2",
+	// 	NodeJs:     false,
+	// 	ReactJs:    false,
+	// 	NextJs:     false,
+	// 	TypeScript: false,
+	// },
+	// {
+	// 	Name:       "Project 3",
+	// 	StartDate:  "2022-06-05",
+	// 	EndDate:    "2023-06-06",
+	// 	Duration:   countDuration("2022-06-05", "2023-06-06"),
+	// 	Desc:       "This is the description of project 3",
+	// 	NodeJs:     true,
+	// 	ReactJs:    true,
+	// 	NextJs:     true,
+	// 	TypeScript: true,
+	// },
 }
 
 func main() {
+	connection.DatabaseConnect()
+
 	e := echo.New()
 
 	e.Static("/public", "public")
@@ -79,14 +87,43 @@ func main() {
 }
 
 func home(c echo.Context) error {
-	var tmpl, err = template.ParseFiles("views/index.html")
+	data, _ := connection.Conn.Query(context.Background(), "SELECT id, name, start_date, end_date, description, technologies, image FROM tb_projects")
 
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	projectData = []Project{}
+	for data.Next() {
+		var each = Project{}
+
+		err := data.Scan(&each.ID, &each.Name, &each.StartDate, &each.EndDate, &each.Desc, &each.Techs, &each.Image)
+		if err != nil {
+			fmt.Println(err.Error())
+			return c.JSON(http.StatusInternalServerError, map[string]string{"Message": err.Error()})
+		}
+
+		each.Duration = countDuration(each.StartDate, each.EndDate)
+		if isAvailable(each.Techs, "nodejs") {
+			each.NodeJs = true
+		}
+		if isAvailable(each.Techs, "reactjs") {
+			each.ReactJs = true
+		}
+		if isAvailable(each.Techs, "nextjs") {
+			each.NextJs = true
+		}
+		if isAvailable(each.Techs, "typescript") {
+			each.TypeScript = true
+		}
+
+		projectData = append(projectData, each)
 	}
 
 	projects := map[string]interface{}{
 		"Projects": projectData,
+	}
+
+	var tmpl, err = template.ParseFiles("views/index.html")
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
 	}
 
 	return tmpl.Execute(c.Response(), projects)
@@ -125,8 +162,8 @@ func projectDetail(c echo.Context) error {
 
 	data := map[string]interface{}{
 		"Project":   ProjectDetail,
-		"StartDate": getDateString(ProjectDetail.StartDate),
-		"EndDate":   getDateString(ProjectDetail.EndDate),
+		"StartDate": getDateString(ProjectDetail.StartDate.Format("2006-01-02")),
+		"EndDate":   getDateString(ProjectDetail.EndDate.Format("2006-01-02")),
 	}
 
 	var tmpl, err = template.ParseFiles("views/project-detail.html")
@@ -193,11 +230,13 @@ func submitProject(c echo.Context) error {
 	nextJs := c.FormValue("nextJs")
 	typescript := c.FormValue("typescript")
 
+	start, _ := time.Parse("2006-01-02", startDate)
+	end, _ := time.Parse("2006-01-02", endDate)
 	var newProject = Project{
 		Name:       name,
-		StartDate:  startDate,
-		EndDate:    endDate,
-		Duration:   countDuration(startDate, endDate),
+		StartDate:  start,
+		EndDate:    end,
+		Duration:   countDuration(start, end),
 		Desc:       desc,
 		NodeJs:     (nodeJs == "nodejs"),
 		ReactJs:    (reactJs == "reactjs"),
@@ -223,11 +262,13 @@ func submitEditedProject(c echo.Context) error {
 	nextJs := c.FormValue("nextJs")
 	typescript := c.FormValue("typescript")
 
+	start, _ := time.Parse("2006-01-02", startDate)
+	end, _ := time.Parse("2006-01-02", endDate)
 	var editedProject = Project{
 		Name:       name,
-		StartDate:  startDate,
-		EndDate:    endDate,
-		Duration:   countDuration(startDate, endDate),
+		StartDate:  start,
+		EndDate:    end,
+		Duration:   countDuration(start, end),
 		Desc:       desc,
 		NodeJs:     (nodeJs == "nodejs"),
 		ReactJs:    (reactJs == "reactjs"),
@@ -286,11 +327,8 @@ func getDateString(date string) string {
 	return d + " " + mon + " " + y
 }
 
-func countDuration(d1 string, d2 string) string {
-	date1, _ := time.Parse("2006-01-02", d1)
-	date2, _ := time.Parse("2006-01-02", d2)
-
-	diff := date2.Sub(date1)
+func countDuration(d1 time.Time, d2 time.Time) string {
+	diff := d2.Sub(d1)
 	days := int(diff.Hours() / 24)
 	weeks := days / 7
 	months := days / 30
@@ -315,4 +353,13 @@ func getProjectIndex(w http.ResponseWriter, r *http.Request) string {
 	lastSegment := path.Base(url)
 	re := regexp.MustCompile("[0-9]+")
 	return strings.Join((re.FindAllString(lastSegment, -1))[:], "")
+}
+
+func isAvailable(arr []string, s string) bool {
+	for _, data := range arr {
+		if data == s {
+			return true
+		}
+	}
+	return false
 }
