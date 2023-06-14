@@ -13,23 +13,31 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary px-4 py-3">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <img src="/public/images/logo.png"/>
+                    <img src="/public/images/logo.png" />
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="/">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active fw-bold" aria-current="page" href="/add-project">Add Project</a>
+                            <a class="nav-link" href="/add-project">Add Project</a>
                         </li>
                     </ul>
-                    <div class="d-flex">
-                        <a class="btn btn-dark" href="/contact" role="button">Contact Me</a>
+                    <div class="d-flex flex-column flex-lg-row">
+                        <ul class="navbar-nav me-2 mb-lg-0 mb-2">
+                            <form id="logoutform" action="/logout" method="post"></form>
+                            <li class="nav-item">
+                                <a class="nav-link" style="cursor: pointer;"
+                                    onclick="document.getElementById('logoutform').submit()">Logout</a>
+                            </li>
+                        </ul>
+                        <a class="btn btn-dark" href="/contact" role="button"
+                            style="max-height: fit-content; max-width: fit-content;">Contact Me</a>
                     </div>
                 </div>
             </div>
@@ -37,7 +45,7 @@
         
         <div class="p-3">
             <form onsubmit="return validDate()" action="/edit-project/{{.Project.ID}}" method="post" class="m-auto" style="max-width: 500px;">
-                <h1 class="mb-3 text-center fw-bold">UPDATE MY PROJECT</h1>
+                <h2 class="my-5 text-center fw-bold">UPDATE MY PROJECT</h2>
 
                 <div class="mb-3">
                     <label for="projectName" class="form-label fw-bold">Project Name</label>
