@@ -56,6 +56,19 @@
         </nav>
 
         <div class="bg-secondary-subtle p-5">
+            
+            {{if .FlashMessage}} {{if .FlashStatus}}
+            <div class="alert alert-success alert-dismissable fade show" role="alert">
+                <strong>{{.FlashMessage}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {{else}}
+            <div class="alert alert-danger alert-dismissable fade show" role="alert">
+                <strong>{{.FlashMessage}}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {{end}} {{end}}
+
             <div class="card m-auto" style="max-width: 1000px;">
                 <div class="card-body d-flex flex-lg-row flex-sm-column flex-column">
 
@@ -95,7 +108,7 @@
                     {{range $index, $data := .Projects}}
                     <div class="col">
                         <div class="card">
-                            <img src="/public/images/img2.png" class="card-img-top" alt="">
+                            <img src="/uploads/{{$data.Image}}" class="card-img-top" alt="">
                             <div class="card-body">
                                 <h5 class="card-title"><a href="/project/{{$data.ID}}" target="_blank" style="text-decoration: none; color: #000000;">{{$data.Name}}</a></h5>
                                 <div class="mb-2 fw-light">durasi: {{$data.Duration}}</div>
@@ -115,7 +128,7 @@
                                     {{end}}
                                 </div>
 
-                                {{if true}}
+                                {{if $.DataSession.IsLogin}}
                                 <div class="row-cols-2 row g-2">
                                     <div class="col">
                                         <form class="d-block" action="/edit-project/{{$data.ID}}" method="GET">

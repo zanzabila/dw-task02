@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path"
 	"personalweb/connection"
+	"personalweb/middleware"
 	"regexp"
 	"strconv"
 	"strings"
@@ -32,6 +33,7 @@ type Project struct {
 	NextJs     bool
 	TypeScript bool
 	Image      string
+	UserID     int
 }
 
 type User struct {
@@ -54,6 +56,7 @@ func main() {
 	e := echo.New()
 
 	e.Static("/public", "public")
+	e.Static("/uploads", "uploads")
 
 	e.Use(session.Middleware(sessions.NewCookieStore([]byte("session"))))
 
@@ -65,8 +68,8 @@ func main() {
 	e.GET("/form-register", formRegister)
 	e.GET("/form-login", formLogin)
 
-	e.POST("/add-project", submitProject)
-	e.POST("/edit-project/:id", submitEditedProject)
+	e.POST("/add-project", middleware.UploadFile(submitProject))
+	e.POST("/edit-project/:id", middleware.UploadFile(submitEditedProject))
 	e.POST("/delete-project/:id", deleteProject)
 	e.POST("/register", register)
 	e.POST("/login", login)
@@ -76,48 +79,81 @@ func main() {
 }
 
 func home(c echo.Context) error {
-	data, _ := connection.Conn.Query(context.Background(), "SELECT * FROM tb_projects ORDER BY id ASC")
-
-	var projectData []Project
-	for data.Next() {
-		var each = Project{}
-
-		err := data.Scan(&each.ID, &each.Name, &each.StartDate, &each.EndDate, &each.Desc, &each.Techs, &each.Image)
-		if err != nil {
-			fmt.Println(err.Error())
-			return c.JSON(http.StatusInternalServerError, map[string]string{"Message": err.Error()})
-		}
-
-		each.Duration = countDuration(each.StartDate, each.EndDate)
-		if isAvailable(each.Techs, "nodejs") {
-			each.NodeJs = true
-		}
-		if isAvailable(each.Techs, "reactjs") {
-			each.ReactJs = true
-		}
-		if isAvailable(each.Techs, "nextjs") {
-			each.NextJs = true
-		}
-		if isAvailable(each.Techs, "typescript") {
-			each.TypeScript = true
-		}
-
-		projectData = append(projectData, each)
-	}
-
 	sess, _ := session.Get("session", c)
+	var projectData []Project
 
 	if sess.Values["isLogin"] != true {
 		userData.IsLogin = false
+		data, _ := connection.Conn.Query(context.Background(), "SELECT * FROM tb_projects ORDER BY id ASC")
+
+		for data.Next() {
+			var each = Project{}
+
+			err := data.Scan(&each.ID, &each.Name, &each.StartDate, &each.EndDate, &each.Desc, &each.Techs, &each.Image, &each.UserID)
+			if err != nil {
+				fmt.Println(err.Error())
+				return c.JSON(http.StatusInternalServerError, map[string]string{"Message": err.Error()})
+			}
+
+			each.Duration = countDuration(each.StartDate, each.EndDate)
+			if isAvailable(each.Techs, "nodejs") {
+				each.NodeJs = true
+			}
+			if isAvailable(each.Techs, "reactjs") {
+				each.ReactJs = true
+			}
+			if isAvailable(each.Techs, "nextjs") {
+				each.NextJs = true
+			}
+			if isAvailable(each.Techs, "typescript") {
+				each.TypeScript = true
+			}
+
+			projectData = append(projectData, each)
+		}
 	} else {
 		userData.IsLogin = sess.Values["isLogin"].(bool)
 		userData.Name = sess.Values["name"].(string)
+		userId := sess.Values["id"]
+		data, _ := connection.Conn.Query(context.Background(), "SELECT * FROM tb_projects WHERE user_id=$1 ORDER BY tb_projects.id ASC", userId)
+
+		for data.Next() {
+			var each = Project{}
+
+			err := data.Scan(&each.ID, &each.Name, &each.StartDate, &each.EndDate, &each.Desc, &each.Techs, &each.Image, &each.UserID)
+			if err != nil {
+				fmt.Println(err.Error())
+				return c.JSON(http.StatusInternalServerError, map[string]string{"Message": err.Error()})
+			}
+
+			each.Duration = countDuration(each.StartDate, each.EndDate)
+			if isAvailable(each.Techs, "nodejs") {
+				each.NodeJs = true
+			}
+			if isAvailable(each.Techs, "reactjs") {
+				each.ReactJs = true
+			}
+			if isAvailable(each.Techs, "nextjs") {
+				each.NextJs = true
+			}
+			if isAvailable(each.Techs, "typescript") {
+				each.TypeScript = true
+			}
+
+			projectData = append(projectData, each)
+		}
 	}
 
 	projects := map[string]interface{}{
-		"Projects":    projectData,
-		"DataSession": userData,
+		"Projects":     projectData,
+		"DataSession":  userData,
+		"FlashStatus":  sess.Values["status"],
+		"FlashMessage": sess.Values["message"],
 	}
+
+	delete(sess.Values, "status")
+	delete(sess.Values, "message")
+	sess.Save(c.Request(), c.Response())
 
 	var tmpl, err = template.ParseFiles("views/index.html")
 
@@ -166,7 +202,7 @@ func projectDetail(c echo.Context) error {
 	var ProjectDetail = Project{}
 
 	err := connection.Conn.QueryRow(context.Background(), "SELECT * FROM tb_projects WHERE id=$1", id).Scan(
-		&ProjectDetail.ID, &ProjectDetail.Name, &ProjectDetail.StartDate, &ProjectDetail.EndDate, &ProjectDetail.Desc, &ProjectDetail.Techs, &ProjectDetail.Image,
+		&ProjectDetail.ID, &ProjectDetail.Name, &ProjectDetail.StartDate, &ProjectDetail.EndDate, &ProjectDetail.Desc, &ProjectDetail.Techs, &ProjectDetail.Image, &ProjectDetail.UserID,
 	)
 
 	if err != nil {
@@ -219,7 +255,7 @@ func formEditProject(c echo.Context) error {
 	var ProjectDetail = Project{}
 
 	err := connection.Conn.QueryRow(context.Background(), "SELECT * FROM tb_projects WHERE id=$1", id).Scan(
-		&ProjectDetail.ID, &ProjectDetail.Name, &ProjectDetail.StartDate, &ProjectDetail.EndDate, &ProjectDetail.Desc, &ProjectDetail.Techs, &ProjectDetail.Image,
+		&ProjectDetail.ID, &ProjectDetail.Name, &ProjectDetail.StartDate, &ProjectDetail.EndDate, &ProjectDetail.Desc, &ProjectDetail.Techs, &ProjectDetail.Image, &ProjectDetail.UserID,
 	)
 
 	if err != nil {
@@ -259,6 +295,15 @@ func formEditProject(c echo.Context) error {
 }
 
 func submitProject(c echo.Context) error {
+	sess, _ := session.Get("session", c)
+
+	if sess.Values["isLogin"] != true {
+		userData.IsLogin = false
+	} else {
+		userData.IsLogin = sess.Values["isLogin"].(bool)
+		userData.Name = sess.Values["name"].(string)
+	}
+
 	name := c.FormValue("projectName")
 	startDate := c.FormValue("startDate")
 	endDate := c.FormValue("endDate")
@@ -283,12 +328,13 @@ func submitProject(c echo.Context) error {
 	}
 	combined := strings.Join(s, ",")
 
-	image := "image.jpg"
+	image := c.Get("dataFile").(string)
+	userID := sess.Values["id"]
 
 	_, err := connection.Conn.Exec(
 		context.Background(),
-		"INSERT INTO tb_projects (name, start_date, end_date, description, technologies, image) VALUES ($1, $2, $3, $4, $5, $6)",
-		name, startDate, endDate, desc, "{"+combined+"}", image,
+		"INSERT INTO tb_projects (name, start_date, end_date, description, technologies, image, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+		name, startDate, endDate, desc, "{"+combined+"}", image, userID,
 	)
 
 	if err != nil {
@@ -302,6 +348,15 @@ func submitProject(c echo.Context) error {
 }
 
 func submitEditedProject(c echo.Context) error {
+	sess, _ := session.Get("session", c)
+
+	if sess.Values["isLogin"] != true {
+		userData.IsLogin = false
+	} else {
+		userData.IsLogin = sess.Values["isLogin"].(bool)
+		userData.Name = sess.Values["name"].(string)
+	}
+
 	id := getProjectIndex(c.Response(), c.Request())
 
 	name := c.FormValue("projectName")
@@ -331,7 +386,7 @@ func submitEditedProject(c echo.Context) error {
 	}
 	combined := strings.Join(s, ",")
 
-	image := "image.jpg"
+	image := c.Get("dataFile").(string)
 
 	_, err := connection.Conn.Exec(
 		context.Background(),
@@ -397,15 +452,20 @@ func register(c echo.Context) error {
 	name := c.FormValue("inputName")
 	email := c.FormValue("inputEmail")
 	password := c.FormValue("inputPassword")
-
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
+
+	user := User{}
+	err = connection.Conn.QueryRow(context.Background(), "SELECT * FROM tb_users WHERE email=$1", email).Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+	if err == nil {
+		return redirectWithMessage(c, "Email has been used.", false, "/form-login")
+	}
 
 	_, err = connection.Conn.Exec(context.Background(), "INSERT INTO tb_users(name, email, password) VALUES ($1, $2, $3)", name, email, hashedPassword)
 	if err != nil {
-		redirectWithMessage(c, "Register failed, please try again.", false, "/form-register")
+		redirectWithMessage(c, "Registration failed, please try again.", false, "/form-register")
 	}
 
-	return redirectWithMessage(c, "Register successful.", true, "/form-login")
+	return redirectWithMessage(c, "Registration successful.", true, "/form-login")
 }
 
 func login(c echo.Context) error {
@@ -419,17 +479,17 @@ func login(c echo.Context) error {
 	user := User{}
 	err = connection.Conn.QueryRow(context.Background(), "SELECT * FROM tb_users WHERE email=$1", email).Scan(&user.ID, &user.Name, &user.Email, &user.Password)
 	if err != nil {
-		return redirectWithMessage(c, "Email incorrect!", false, "/form-login")
+		return redirectWithMessage(c, "Email incorrect.", false, "/form-login")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return redirectWithMessage(c, "Password incorrect!", false, "/form-login")
+		return redirectWithMessage(c, "Password incorrect.", false, "/form-login")
 	}
 
 	sess, _ := session.Get("session", c)
 	sess.Options.MaxAge = 18000 //half an hour
-	sess.Values["message"] = "Login successful!"
+	sess.Values["message"] = "Login successful."
 	sess.Values["status"] = true
 	sess.Values["name"] = user.Name
 	sess.Values["email"] = user.Email
