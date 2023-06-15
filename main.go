@@ -457,7 +457,7 @@ func register(c echo.Context) error {
 	user := User{}
 	err = connection.Conn.QueryRow(context.Background(), "SELECT * FROM tb_users WHERE email=$1", email).Scan(&user.ID, &user.Name, &user.Email, &user.Password)
 	if err == nil {
-		return redirectWithMessage(c, "Email has been used.", false, "/form-login")
+		return redirectWithMessage(c, "Email has been used. Please login to your account.", false, "/form-login")
 	}
 
 	_, err = connection.Conn.Exec(context.Background(), "INSERT INTO tb_users(name, email, password) VALUES ($1, $2, $3)", name, email, hashedPassword)

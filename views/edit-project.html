@@ -93,8 +93,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="formFile" class="form-label fw-bold">Upload Image</label>
-                    <input class="form-control" type="file" name="inputImage" id="inputImage" value="{{.Project.Image}}" required>
+                    <label for="inputImage" class="form-label fw-bold">Upload Image</label>
+                    <div class="my-1" style="width: 200px;">
+                        <img class="img-fluid rounded" id="image-preview" src="/uploads/{{.Project.Image}}" alt="current-project-image"/>
+                    </div>
+                    <input class="form-control" type="file" accept="image/*" name="inputImage" id="inputImage" value="{{.Project.Image}}" onchange="updatePreview()" required>
                 </div>
 
                 <div class="mb-3 text-end">

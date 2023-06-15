@@ -40,13 +40,13 @@
     </nav>
 
     {{if .FlashMessage}} {{if .FlashStatus}}
-    <div class="mt-3 mx-3 alert alert-success alert-dismissable fade show" role="alert">
-        <strong>{{.FlashMessage}}</strong>
+    <div class="d-flex alert alert-success alert-dismissable fade show" role="alert">
+        <strong class="me-auto">{{.FlashMessage}}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {{else}}
-    <div class="mt-3 mx-3 alert alert-danger alert-dismissable fade show" role="alert">
-        <strong>{{.FlashMessage}}</strong>
+    <div class="d-flex alert alert-danger alert-dismissable fade show" role="alert">
+        <strong class="me-auto">{{.FlashMessage}}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {{end}} {{end}}

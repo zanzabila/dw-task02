@@ -54,20 +54,22 @@
                 </div>
             </div>
         </nav>
-
-        <div class="bg-secondary-subtle p-5">
             
+        <div class="bg-secondary-subtle p-0">
             {{if .FlashMessage}} {{if .FlashStatus}}
-            <div class="alert alert-success alert-dismissable fade show" role="alert">
-                <strong>{{.FlashMessage}}</strong>
+            <div class="d-flex alert alert-success alert-dismissable fade show m-0" role="alert">
+                <strong class="me-auto">{{.FlashMessage}}</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {{else}}
-            <div class="alert alert-danger alert-dismissable fade show" role="alert">
-                <strong>{{.FlashMessage}}</strong>
+            <div class="d-flex alert alert-danger alert-dismissable fade show m-0" role="alert">
+                <strong class="me-auto">{{.FlashMessage}}</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {{end}} {{end}}
+        </div>
+
+        <div class="bg-secondary-subtle p-5">
 
             <div class="card m-auto" style="max-width: 1000px;">
                 <div class="card-body d-flex flex-lg-row flex-sm-column flex-column">
@@ -89,7 +91,7 @@
                         </div>
                     </div>
                     
-                    <div class="card justify-content-center mx-auto" style="max-width: 400px; width: 48em;">
+                    <div class="card justify-content-center mx-auto" style="max-width: 100%; width: 24em;">
                         <img class="card-img-top" src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="photo"/>
                         <div class="card-body">
                             <div class="fw-bold text-center" style="align-self: center;">Rhoma Irama</div>
