@@ -16,7 +16,8 @@ function validDate() {
 
 function updatePreview() {
     if (originalImage == "") {
-        originalImage = document.getElementById("image-preview").src;
+        // originalImage = document.getElementById("image-preview").src;
+        originalImage = "/public/images/nopreview.png";
     }
 
     let img = ""
